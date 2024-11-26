@@ -12,7 +12,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 
-class MyService: Service() {
+class MyService : Service() {
 
     private val coroutineScope = CoroutineScope(Dispatchers.Main)
 
@@ -24,14 +24,15 @@ class MyService: Service() {
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         log("onStartCommand()")
 
+        val start = intent?.getIntExtra(EXTRA_START, 0) ?: 0
         coroutineScope.launch {
-            for (i in 0..100){
+            for (i in start..100) {
                 delay(1000)
                 log("Timer $i")
             }
         }
 
-        return super.onStartCommand(intent, flags, startId)
+        return START_STICKY
     }
 
     override fun onDestroy() {
@@ -44,13 +45,17 @@ class MyService: Service() {
         TODO("Not yet implemented")
     }
 
-    private fun log(msg: String){
+    private fun log(msg: String) {
         Log.d("SERVICE_TAG", "MyService $msg")
     }
 
-    companion object{
-        fun newIntent(context: Context): Intent{
-            return Intent(context, MyService::class.java)
+    companion object {
+        private const val EXTRA_START = "Start"
+
+        fun newIntent(context: Context, start: Int): Intent {
+            return Intent(context, MyService::class.java).apply {
+                putExtra(EXTRA_START, start)
+            }
         }
     }
 }
