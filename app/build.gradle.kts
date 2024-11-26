@@ -5,7 +5,7 @@ plugins {
 
 android {
     namespace = "com.arziman_off.learnservices"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.arziman_off.learnservices"
