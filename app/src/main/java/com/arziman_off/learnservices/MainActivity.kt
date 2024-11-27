@@ -1,15 +1,8 @@
 package com.arziman_off.learnservices
 
-import android.app.Notification
-import android.app.NotificationChannel
-import android.app.NotificationManager
-import android.os.Build
 import android.os.Bundle
-import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.NotificationCompat
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
+import androidx.core.content.ContextCompat
 import com.arziman_off.learnservices.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
@@ -25,27 +18,14 @@ class MainActivity : AppCompatActivity() {
             startService(MyService.newIntent(this, 11))
         }
         binding.foregroundService.setOnClickListener {
-            showNotification()
-        }
-    }
-
-    private fun showNotification() {
-        val notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val notificationChannel = NotificationChannel(
-                CHANNEL_ID, CHANNEL_NAME, NotificationManager.IMPORTANCE_DEFAULT
+            ContextCompat.startForegroundService(
+                this,
+                MyForegroundService.newIntent(this)
             )
-            notificationManager.createNotificationChannel(notificationChannel)
         }
-        val notification = NotificationCompat.Builder(this, CHANNEL_ID)
-            .setContentTitle("Таймер")
-            .setContentText("Тик-Так")
-            .setSmallIcon(R.drawable.ic_launcher_foreground)
-            .build()
-        notificationManager.notify(1, notification)
     }
 
-    companion object{
+    companion object {
         private const val CHANNEL_ID = "channel_id"
         private const val CHANNEL_NAME = "channel_name"
     }
