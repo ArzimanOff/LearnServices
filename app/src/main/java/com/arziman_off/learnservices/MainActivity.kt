@@ -1,8 +1,13 @@
 package com.arziman_off.learnservices
 
+import android.app.job.JobInfo
+import android.app.job.JobScheduler
+import android.app.job.JobWorkItem
+import android.content.ComponentName
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -13,7 +18,7 @@ class MainActivity : AppCompatActivity() {
     private val binding by lazy {
         ActivityMainBinding.inflate(layoutInflater)
     }
-
+    private var page = 0
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
@@ -30,11 +35,23 @@ class MainActivity : AppCompatActivity() {
         binding.stopForegroundService.setOnClickListener {
             stopService(MyForegroundService.newIntent(this))
         }
-        binding.intentService.setOnClickListener{
+        binding.intentService.setOnClickListener {
             ContextCompat.startForegroundService(
                 this,
                 MyIntentService.newIntent(this)
             )
+        }
+        binding.jobScheduler.setOnClickListener {
+            Log.d("SERVICE_TAG", "jobScheduler clicked!")
+            val componentName = ComponentName(this, MyJobService::class.java)
+            val jobInfo = JobInfo.Builder(MyJobService.JOB_ID, componentName)
+                .setRequiresCharging(true)
+                .setRequiredNetworkType(JobInfo.NETWORK_TYPE_UNMETERED)
+                .build()
+
+            val jobScheduler = getSystemService(JOB_SCHEDULER_SERVICE) as JobScheduler
+            val intent = MyJobService.newIntent(page++)
+            jobScheduler.enqueue(jobInfo, JobWorkItem(intent))
         }
     }
 
