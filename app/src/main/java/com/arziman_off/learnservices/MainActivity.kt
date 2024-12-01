@@ -53,6 +53,9 @@ class MainActivity : AppCompatActivity() {
             val intent = MyJobService.newIntent(page++)
             jobScheduler.enqueue(jobInfo, JobWorkItem(intent))
         }
+        binding.jobIntentService.setOnClickListener {
+            MyJobIntentService.enqueue(this, page++)
+        }
     }
 
 //    private fun askPermission() {
